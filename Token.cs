@@ -1,3 +1,4 @@
+//Marco Antonio Puga Blanco
 namespace Semantica
 {
     public class Token

@@ -1,4 +1,5 @@
-﻿using System;
+﻿//Marco Antonio Puga Blanco
+using System;
 using System.IO;
 
 namespace Semantica
