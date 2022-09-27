@@ -9,6 +9,7 @@ char x;
 void main(){
     if(3+5 < 10)
     {
-        printf("Hoa");
+        if(1 == 1)
+            printf("Hoa");
     }
 }

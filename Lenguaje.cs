@@ -8,7 +8,8 @@ using System.Collections.Generic;
 //Requerimiento 3.- Programar un metodo de converison de un valor a un tipo de dato
 //                  private float Convert(float valor, string tipoDato)
 //                  Deberan usar el residuo de la division %255, %65535
-
+//Requerimiento 4.- Evaluar nuevamente la condicion del if-else, while, for, do while con respecto al parametro que recibe
+//Requerimiento 5.- Levantar una excepcion en el scanf cuando la captura no sea un numero
 namespace Semantica
 {
     public class Lenguaje : Sintaxis
@@ -150,6 +151,17 @@ namespace Semantica
                 Lista_identificadores(tipo);
             }
         }
+
+        //Main      -> void main() Bloque de instrucciones
+        private void Main()
+        {
+            match("void");
+            match("main");
+            match("(");
+            match(")");
+            BloqueInstrucciones(true);
+        }
+
         //Bloque de instrucciones -> {listaIntrucciones?}
         private void BloqueInstrucciones(bool evaluacion) 
         {
@@ -164,7 +176,7 @@ namespace Semantica
         //ListaInstrucciones -> Instruccion ListaInstrucciones?
         private void ListaInstrucciones(bool evaluacion) 
         {
-            Instruccion();
+            Instruccion(evaluacion);
             if (getContenido() != "}")
             {
                 ListaInstrucciones(evaluacion);
@@ -174,7 +186,7 @@ namespace Semantica
         //ListaInstruccionesCase -> Instruccion ListaInstruccionesCase?
         private void ListaInstruccionesCase(bool evaluacion) 
         {
-            Instruccion();
+            Instruccion(evaluacion);
             if (getContenido() != "case" && getContenido() != "break" && getContenido() != "default" && getContenido() != "}")
             {
                 ListaInstruccionesCase(evaluacion);
@@ -269,7 +281,6 @@ namespace Semantica
                 {
                     modVariable(nombre, resultado);
                 }
-                modVariable(nombre, resultado);
             }
             else
             {
@@ -282,7 +293,8 @@ namespace Semantica
         {
             match("while");
             match("(");
-            Condicion();
+            bool validarWhile = Condicion();
+            //Requerimiento 4
             match(")");
             if (getContenido() == "{")
             {
@@ -304,11 +316,12 @@ namespace Semantica
             }
             else
             {
-                Instruccion(evaluacion););
+                Instruccion(evaluacion);
             }
             match("while");
             match("(");
-            Condicion();
+            //Requerimiento 4
+            bool validarDo = Condicion();
             match(")");
             match(";");
         }
@@ -318,7 +331,8 @@ namespace Semantica
             match("for");
             match("(");
             Asignacion(evaluacion);
-            Condicion();
+            //Requerimiento 4
+            bool validarFor =  Condicion();
             match(";");
             Incremento(evaluacion);
             match(")");
@@ -336,7 +350,6 @@ namespace Semantica
         private void Incremento(bool evaluacion)
         {
             string variable = getContenido();
-            //Requerimiento 2.- Si no existe la variable levanta la excepcion
             if (!existeVariable(getContenido()))
             {
                 throw new Error("No existe la variable<" + getContenido() + "> en linea: " + linea, log);
@@ -431,23 +444,25 @@ namespace Semantica
         }
 
         //If -> if(Condicion) bloque de instrucciones (else bloque de instrucciones)?
-        private void If()
+        private void If(bool condicion)
         {
             match("if");
             match("(");
+            //Requerimiento 4
             bool validarIf = Condicion();
             match(")");
             if (getContenido() == "{")
             {
-                BloqueInstrucciones(validarIf););
+                BloqueInstrucciones(validarIf);
             }
             else
             {
-                Instruccion(validarIf););
+                Instruccion(validarIf);
             }
             if (getContenido() == "else")
             {
                 match("else");
+                //Requerimiento 4
                 if (getContenido() == "{")
                 {
                     BloqueInstrucciones(validarIf);
@@ -488,35 +503,23 @@ namespace Semantica
         }
 
         //Scanf -> scanf(cadena, &Identificador);
-        private void Scanf()
+        private void Scanf(bool evaluacion)
         {
             match("scanf");
             match("(");
             match(Tipos.Cadena);
             match(",");
             match("&");
-            //Requerimiento 2.- Si no existe la variable levanta la excepcion
             if (!existeVariable(getContenido()))
             {
                 throw new Error("No existe la variable<" + getContenido() + "> en linea: " + linea, log);
-
             }
             string val = "" + Console.ReadLine();
-            //Requerimiento 5.- Modificar el valor de la variable
+            //Requerimiento 5
             modVariable(getContenido(), float.Parse(val));
             match(Tipos.Identificador);
             match(")");
             match(";");
-        }
-
-        //Main      -> void main() Bloque de instrucciones
-        private void Main()
-        {
-            match("void");
-            match("main");
-            match("(");
-            match(")");
-            BloqueInstrucciones(true);
         }
 
         //Expresion -> Termino MasTermino
