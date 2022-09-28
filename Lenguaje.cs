@@ -10,6 +10,7 @@ using System.Collections.Generic;
 //                  Deberan usar el residuo de la division %255, %65535
 //Requerimiento 4.- Evaluar nuevamente la condicion del if-else, while, for, do while con respecto al parametro que recibe
 //Requerimiento 5.- Levantar una excepcion en el scanf cuando la captura no sea un numero
+//Requerimiento 6.- Ejecutar el for();  
 namespace Semantica
 {
     public class Lenguaje : Sintaxis
@@ -332,18 +333,26 @@ namespace Semantica
             match("(");
             Asignacion(evaluacion);
             //Requerimiento 4
+            //Requerimiento 6: a)Necesito guardar la psicion de lectura en el archivo de texto
+                
             bool validarFor =  Condicion();
-            match(";");
-            Incremento(evaluacion);
-            match(")");
-            if (getContenido() == "{")
-            {
-                BloqueInstrucciones(evaluacion);
-            }
-            else
-            {
-                Instruccion(evaluacion);
-            }
+            //                 b)Agregar un iclo ehile despues de validar el for
+            //while()
+            //{
+                    match(";");
+                    Incremento(evaluacion);
+                    match(")");
+                    if (getContenido() == "{")
+                    {
+                        BloqueInstrucciones(evaluacion);
+                    }
+                    else
+                    {
+                        Instruccion(evaluacion);
+                    }
+                    //c) Regresar a la posicion de lectura del archivo
+                    //d) Sacar otro token
+            //}
         }
 
         //Incremento -> Identificador ++ | --
@@ -361,9 +370,9 @@ namespace Semantica
                 match("++");
                 if(evaluacion)
                 {
-                    modVariable(variable);
+                    modVariable(variable, getValor(variable) + 1);
                 }
-                modVariable(variable, getValor(variable) + 1);
+                
             }
             else
             {
@@ -602,6 +611,10 @@ namespace Semantica
 
                 }
                 log.Write(getContenido() + " ");
+                if(dominante < getTipo(getContenido()))
+                {
+                    dominante = getTipo(getContenido());
+                }
                 stack.Push(getValor(getContenido()));
                 match(Tipos.Identificador);
             }
