@@ -255,11 +255,9 @@ namespace Semantica
         //Asignacion -> identificador = cadena | Expresion;
         private void Asignacion(bool evaluacion)
         {
-            //Requerimiento 2.- Si no existe la variable levanta la excepcion
             if (!existeVariable(getContenido()))
             {
                 throw new Error("No existe la variable<" + getContenido() + "> en linea: " + linea, log);
-
             }
             log.WriteLine();
             log.Write(getContenido() + " = ");
@@ -331,15 +329,33 @@ namespace Semantica
         {
             match("for");
             match("(");
+            string var = getContenido();
             Asignacion(evaluacion);
+            match(Tipos.Identificador);
+            match("=");
+            Expresion();
+            float resultado = stack.Pop();
+            modVariable(var, resultado);
+            match(";");
             //Requerimiento 4
             //Requerimiento 6: a)Necesito guardar la psicion de lectura en el archivo de texto
-                
             bool validarFor =  Condicion();
+            match(";");
+            //Asignacion(evaluacion);
+            Incremento(evaluacion);
+            match(")");
+            if (getContenido() == "{")
+            {
+                BloqueInstrucciones(validarFor);
+            }
+            else
+            {
+                Instruccion(validarFor);
+            }
             //                 b)Agregar un iclo ehile despues de validar el for
             //while()
             //{
-                    match(";");
+                    /*match(";");
                     Incremento(evaluacion);
                     match(")");
                     if (getContenido() == "{")
@@ -349,7 +365,7 @@ namespace Semantica
                     else
                     {
                         Instruccion(evaluacion);
-                    }
+                    }*/
                     //c) Regresar a la posicion de lectura del archivo
                     //d) Sacar otro token
             //}
@@ -358,21 +374,20 @@ namespace Semantica
         //Incremento -> Identificador ++ | --
         private void Incremento(bool evaluacion)
         {
-            string variable = getContenido();
             if (!existeVariable(getContenido()))
             {
                 throw new Error("No existe la variable<" + getContenido() + "> en linea: " + linea, log);
-
             }
             match(Tipos.Identificador);
+            string variable = getContenido();
+            match(Tipos.IncrementoTermino);
             if (getContenido() == "++")
             {
                 match("++");
                 if(evaluacion)
                 {
                     modVariable(variable, getValor(variable) + 1);
-                }
-                
+                }       
             }
             else
             {
@@ -380,7 +395,6 @@ namespace Semantica
                 modVariable(variable, getValor(variable) - 1);
             }
         }
-
         //Switch -> switch (Expresion) {Lista de casos} | (default: )
         private void Switch(bool evaluacion)
         {
@@ -604,11 +618,9 @@ namespace Semantica
             }
             else if (getClasificacion() == Tipos.Identificador)
             {
-                //Requerimiento 2.- Si no existe la variable levanta la excepcion
                 if (!existeVariable(getContenido()))
                 {
                     throw new Error("No existe la variable<" + getContenido() + "> en linea: " + linea, log);
-
                 }
                 log.Write(getContenido() + " ");
                 if(dominante < getTipo(getContenido()))
@@ -647,15 +659,22 @@ namespace Semantica
                 match(")");
                 if(huboCasteo)
                 {
-                    //Requerimiento 2
+                   /* //Requerimiento 2
                     //saco un elemento del stack 
                     //convierto ese valor al equivalente en casteo
+                    float n1 = stack.Pop();
+                    stack.Push(Convert(n1,casteo));
+                    dominante = casteo;
                     //Requerimiento 3
                     //si el castoe es (char) y el pop regresa un 256
-                    //el valor equivalente en casteo es 0
-
+                    //el valor equivalente en casteo es 0*/
                 }
             }
         }
+
+        /*private float Convert(float valor, string tipoDato)
+        {
+
+        }*/
     }
 }
