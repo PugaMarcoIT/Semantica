@@ -1,5 +1,5 @@
 Archivo: prueba.cpp
-07/10/2022 23:56:07
-
-i = 0  = 0
-Error de sintaxis, se espera un = en linea: 12
+09/10/2022 12:19:02
+altura 2  
+i = altura = 3
+Error de sintaxis, se espera un = en linea: 16
