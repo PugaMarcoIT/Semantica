@@ -64,6 +64,23 @@ namespace Semantica
                 }
 
         }
+        private float Convert(float valor, Variable.TipoDato tipo)
+        {
+            if(dominante == Variables.TipoDato.Char && valor > 255)
+            {
+                valor = valor%256;
+                return valor;
+            }
+            else if(dominante == variable.tipoDato.Int && valor > 65535)
+            {
+                valor = valor % 65535;
+                return valor;
+            }
+            else
+            {
+                return valor;
+            }
+        }
         private float getValor(string nombre)
         {
             float n = 0;
@@ -505,10 +522,10 @@ namespace Semantica
             if (getClasificacion() == Tipos.Cadena)
             {
                 //Requerimiento 1
-                Console.WriteLine(getContenido().Replace("\"", " ").Replace("\\n", "\n").Replace("\\t", "    "));
+                //Console.WriteLine(getContenido().Replace("\"", " ").Replace("\\n", "\n").Replace("\\t", "    "));
                 if(evaluacion)
                 {
-                    Console.Write(getContenido());
+                    Console.WriteLine(getContenido().Replace("\"", " ").Replace("\\n", "\n").Replace("\\t", "    "));
                 }
                 match(Tipos.Cadena);
             }
