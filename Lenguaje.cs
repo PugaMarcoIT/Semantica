@@ -64,6 +64,7 @@ namespace Semantica
                 }
 
         }
+        //*
         private float Convert(float valor, Variable.TipoDato tipo)
         {
             if(dominante == Variables.TipoDato.Char && valor > 255)
@@ -81,6 +82,7 @@ namespace Semantica
                 return valor;
             }
         }
+        //*
         private float getValor(string nombre)
         {
             float n = 0;
@@ -311,6 +313,10 @@ namespace Semantica
             match("(");
             bool validarWhile = Condicion();
             //Requerimiento 4
+            if(evaluacion)
+            {
+                validarWhile = false;
+            }
             match(")");
             if (getContenido() == "{")
             {
@@ -338,6 +344,10 @@ namespace Semantica
             match("(");
             //Requerimiento 4
             bool validarDo = Condicion();
+            if(evaluacion)
+            {
+                validarDo = false;
+            }
             match(")");
             match(";");
         }
